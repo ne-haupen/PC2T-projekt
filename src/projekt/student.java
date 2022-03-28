@@ -54,6 +54,7 @@ public abstract class student implements Serializable{
 		try {
 			DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 			this.narozeni = format.parse(datum);
+			narozeni.setYear(narozeni.getYear()+1900);
 		}catch(Exception e) {
 			System.out.println("byl zadan spatny format data narozeni");
 		}

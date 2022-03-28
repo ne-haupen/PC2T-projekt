@@ -6,9 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,30 +19,100 @@ public class databaze {
 	private LinkedHashMap<Integer, student> studenti = new LinkedHashMap();
 	Scanner sc = new Scanner(System.in);
 	void precistData() {
+		String pwd = System.getProperty("user.dir");
+		File[] path = new File(pwd).listFiles();
+		LinkedList<File> data = new LinkedList();
+		String fileName= "";
+		int pocet = 0;
+		int vyber = 0;
 		if(studenti.size() != 0) {
 			System.out.println("Databaze neni prazdna a bude prepsana, pokracovat?");
-			//pokracovat?
+			System.out.println("1. ano");
+			System.out.println("2. ne");
+			int o = sc.nextInt();
+			
+			switch(o) {
+			case 1:
+				break;
+			default:
+				return;
+			}
 		}
-		String fileName= "studenti.txt";
+		System.out.println("Vyberte soubor:");
+		for(File s: path) {
+			if(s.getName().endsWith(".txt")) {
+				data.add(s);
+				System.out.println(pocet+1 + ". " + s.getName());
+				pocet++;
+			}
+		}
+		if(pocet == 0) {
+			System.out.println("zadna databaze neni ulozena");
+			return;
+		}
+		while(vyber == 0) {
+			System.out.println("vyberte moznost: ");
+			vyber = sc.nextInt();
+			if(vyber < 1 || vyber > pocet) {
+				System.out.println("spatny rozsah vyberu");
+				vyber = 0;
+			}else {
+				fileName = data.get(vyber-1).getName();
+			}
+		}
 		try {
-			String fileNameIn= "Test.txt";
 			FileInputStream fin = new FileInputStream(fileName);
 			ObjectInputStream ois = new ObjectInputStream(fin);
 			studenti.clear();
 			studenti = (LinkedHashMap<Integer, student>) ois.readObject();
 			ois.close();
+		}catch (StreamCorruptedException e) {
+			System.out.println("soubor neobsahuje databazi");
+			return;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.println(e.toString());
 			e.printStackTrace();
 		}
 	}
 	void nahratData() {
 		if(studenti.size() == 0) {
 			System.out.println("Databaze je prazdna, nejsou zadne data k ulozeni");
+			return;
 		}
-		String fileName= "studenti.txt";
+		String pwd = System.getProperty("user.dir");
+		File[] path = new File(pwd).listFiles();
+		String fileName = "";
+		while(fileName.isEmpty()) {
+			System.out.println("Zadejte jmeno souboru: ");
+			if(sc.hasNextLine()) {
+				fileName = sc.nextLine();
+			}
+			if(!fileName.endsWith(".txt")) {
+				fileName += ".txt";
+			}
+			for(File f: path) {
+				//System.out.println(f.getName());
+				if(f.getName().contains(fileName)) {
+					System.out.println("soubor existuje");
+					System.out.println("1. vybrat nove jmeno");
+					System.out.println("2. prepsat");
+					System.out.println("3. exit");
+					int o = sc.nextInt();
+					switch(o) {
+					case 1:
+						fileName = "";
+						break;
+					case 2:
+						fileName = f.getName();
+						break;
+					default:
+						return;
+					}
+				}
+			}
+		}
 		try {
 			FileOutputStream fos = new FileOutputStream(fileName);
 	        ObjectOutputStream s = new ObjectOutputStream(fos);
@@ -89,10 +161,42 @@ public class databaze {
 	}
 	void celkovyPrumer() {
 		float sum = 0;
-		for(student s: studenti.values()) {
-			sum += s.getPrumer();
+		int pocet = 0;
+		System.out.println("Zadejte obor studenta");
+		System.out.println("1... humanitni obor");
+		System.out.println("2... technicky obor");
+		System.out.println("3... kombinovany obor");
+		
+		int o = sc.nextInt();
+		switch(o) {
+		case 1:
+			for(student s: studenti.values()) {
+				if(s.obor == "humanitni obor") {
+					sum += s.getPrumer();
+					pocet++;
+				}
+				
+			}
+			System.out.println("V humanitnim oboru je prumer: " + sum/pocet);
+			break;
+		case 2:
+			for(student s: studenti.values()) {
+				if(s.obor == "technicky obor") {
+					sum += s.getPrumer();
+					pocet++;
+				}
+			}
+			System.out.println("V technickem oboru je prumer: " + sum/pocet);
+			break;
+		case 3:
+			for(student s: studenti.values()) {
+				if(s.obor == "kombinovany obor") {
+					sum += s.getPrumer();
+					pocet++;
+				}
+			}
+			System.out.println("V kombinovanem oboru je prumer: " + sum/pocet);
 		}
-		System.out.println("celkovy prumer vsech studentu je: " + sum/studenti.size());
 	}
 	void SerazenyVypisStudentu() {
 		System.out.println("Zadejte obor studenta");
@@ -187,10 +291,12 @@ public class databaze {
 			novyStudent = new kombinovanyObor(generovatID());
 			break;
 		}
-		String jmeno;
+		String jmeno = "";
 		while(novyStudent.maJmeno() == false) {
 			System.out.println("zadejte jmeno studenta");
-			jmeno = sc.nextLine();
+			if(sc.hasNextLine()) {
+				jmeno = sc.nextLine();
+			}
 			novyStudent.setJmeno(jmeno);
 		}
 		while(novyStudent.maDatum() == false) {
@@ -199,7 +305,7 @@ public class databaze {
 		}
 		studenti.put(novyStudent.getID(), novyStudent);
 	}
-	int generovatID() {
+	private int generovatID() {
 		if(studenti.size() == 0) {
 			return 1;
 		}else {
