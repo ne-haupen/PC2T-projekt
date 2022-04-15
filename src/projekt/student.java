@@ -17,8 +17,9 @@ public abstract class student implements Serializable{
 	DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 	String obor;
 	
-	student(int id){
+	student(int id, String obor){
 		this.id = id;
+		this.obor = obor;
 	}
 	
 	public student() {
@@ -78,14 +79,15 @@ public abstract class student implements Serializable{
 	    return currentDate.getYear()-born.getYear();
 
 	}
-	void setJmeno(String jmeno) {
-		String[] data = jmeno.split(" ");
-		if(data.length != 2) {
+	boolean setJmeno(String jmeno) {
+		String[] data = jmeno.split("\\s+", 2);
+		if(data.length != 2 || data[0].isBlank() || data[1].isBlank()) {
 			System.out.println("zadan spatny format jmena");
-			return;
+			return false;
 		}
 		this.jmeno = data[0];
 		this.prijmeni = data[1];
+		return true;
 	}
 	void setNarozeni(String datum) {
 		try {

@@ -460,12 +460,17 @@ public class databaze {
 			break;
 		}
 		String jmeno = "";
-		while(novyStudent.maJmeno() == false) {
+		while(true) {
 			System.out.print("zadejte jmeno studenta: ");
-			if(sc.hasNextLine()) {
-				jmeno = sc.nextLine();
+			while(!sc.hasNext())
+			{
+				sc.nextLine();
 			}
-			novyStudent.setJmeno(jmeno);
+			jmeno = sc.nextLine();
+			jmeno = sc.nextLine();
+			if(novyStudent.setJmeno(jmeno) == true) {
+				break;
+			}
 		}
 		while(novyStudent.maDatum() == false) {
 			System.out.println("zadejte datum narozeni studenta");

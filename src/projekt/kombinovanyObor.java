@@ -1,9 +1,8 @@
 package projekt;
 
 public class kombinovanyObor extends student{
-	String obor = "kombinovany obor";
 	public kombinovanyObor(int generovatID) {
-		super(generovatID);
+		super(generovatID, "kombinovany obor");
 	}
 
 	public kombinovanyObor() {

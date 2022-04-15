@@ -1,12 +1,14 @@
 package projekt;
 
 public class technickyObor extends student {
-	String obor = "technicky obor";
+	String obor;
 	public technickyObor(int generovatID) {
-		super(generovatID);
+		super(generovatID, "technicky obor");
 	}
 	public technickyObor() {
+		
 		super();
+		obor = "technicky obor";
 		// TODO Auto-generated constructor stub
 	}
 	@Override 
