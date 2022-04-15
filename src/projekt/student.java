@@ -1,5 +1,8 @@
 package projekt;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,15 +14,39 @@ public abstract class student implements Serializable{
 	private int id;
 	private LinkedList<Integer> znamky = new LinkedList();
 	private float prumer=0;
+	DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 	String obor;
+	
 	student(int id){
 		this.id = id;
+	}
+	
+	public student() {
+		// TODO Auto-generated constructor stub
+	}
+
+	void dbSetup(int id, String name, String prijmeni, int age, String znamky, float prumer) {
+		this.id = id;
+		this.jmeno = name;
+		this.prijmeni = prijmeni;
+		for (int i = 0; i < znamky.length(); i++) {
+			this.znamky.add(Character.getNumericValue(znamky.charAt(i)));
+        }
+		updatePrumer();
+		
 	}
 	String getJmeno() {
 		return jmeno;
 	}
 	String getPrijmeni() {
 		return prijmeni;
+	}
+	String getZnamkyString() {
+		String s = new String();
+		for(int n: znamky) {
+			s += ((Integer)n).toString();
+		}
+		return s;
 	}
 	boolean maJmeno() {
 		if(jmeno == null) {
@@ -41,6 +68,16 @@ public abstract class student implements Serializable{
 	float getPrumer() {
 		return this.prumer;
 	}
+	int vek() {
+		
+		/*
+		 * kontrola jesli je vlozeny datum narozeni skutecni, nebo alespon pred aktualnim datem
+		 */
+	    Date born = getNarozeni();
+	    LocalDate currentDate = LocalDate.now();
+	    return currentDate.getYear()-born.getYear();
+
+	}
 	void setJmeno(String jmeno) {
 		String[] data = jmeno.split(" ");
 		if(data.length != 2) {
@@ -52,7 +89,6 @@ public abstract class student implements Serializable{
 	}
 	void setNarozeni(String datum) {
 		try {
-			DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 			this.narozeni = format.parse(datum);
 			narozeni.setYear(narozeni.getYear()+1900);
 		}catch(Exception e) {
@@ -68,6 +104,7 @@ public abstract class student implements Serializable{
 			return;
 		}
 		znamky.add(i);
+		System.out.println("znamka pridana");
 		updatePrumer();
 	}
 	void updatePrumer() {

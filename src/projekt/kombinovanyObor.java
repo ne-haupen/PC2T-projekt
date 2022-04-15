@@ -6,6 +6,11 @@ public class kombinovanyObor extends student{
 		super(generovatID);
 	}
 
+	public kombinovanyObor() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override 
 	public void dovednost() {
 		return;

@@ -1,15 +1,21 @@
 package projekt;
 
-public class main {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 
+public class main {
 	public static void main(String[] args) {
 		databaze db = new databaze();
+		//db.deleteDB();
+		//db.dbInit();
+		db.resetDB();
+		db.pridatStudenta();
+		db.pridatZnamku(1);
+		db.pridatZnamku(1);
 		
-		db.precistData();
-		db.vypsatInformaceStudenta(1);
-		db.spustitSchopnost(1);
-		System.out.println("done");
-
-	}
-
+		db.saveDataToDB();
+		
+		db.readSQL();
+}
 }

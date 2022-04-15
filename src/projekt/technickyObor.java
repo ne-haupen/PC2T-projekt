@@ -5,6 +5,10 @@ public class technickyObor extends student {
 	public technickyObor(int generovatID) {
 		super(generovatID);
 	}
+	public technickyObor() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	@Override 
 	public void dovednost() {
 		if(super.getNarozeni().getYear()%4 == 0) {

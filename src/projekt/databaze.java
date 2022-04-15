@@ -7,21 +7,176 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
-
+import java.sql.*;
 
 public class databaze {
-	private LinkedHashMap<Integer, student> studenti = new LinkedHashMap();
+	private LinkedHashMap<Integer, student> studenti = new LinkedHashMap<Integer, student>();
 	Scanner sc = new Scanner(System.in);
+	void resetDB(){
+		Connection c = null;
+	      Statement stmt = null;
+	      try {
+	         Class.forName("org.postgresql.Driver");
+	         c = DriverManager
+	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
+	            "general", "123");
+	         System.out.println("Opened database successfully");
+
+	         stmt = c.createStatement();
+	         String sql = "DROP TABLE DATA";
+	         stmt.executeUpdate(sql);
+	         stmt.close();
+	         c.close();
+	      } catch ( Exception e ) {
+	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+	         e.printStackTrace();
+	         System.exit(0);
+	      }
+	      dbInit();
+	      System.out.println("Table reseted successfully");
+	}
+	
+	void dbInit() {
+		Connection c = null;
+	      Statement stmt = null;
+	      try {
+	         Class.forName("org.postgresql.Driver");
+	         c = DriverManager
+	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
+	            "general", "123");
+	         System.out.println("Opened database successfully");
+
+	         stmt = c.createStatement();
+	         String sql = "CREATE TABLE DATA" +
+	            "(ID INT PRIMARY KEY     NOT NULL," +
+	            " JMENO           TEXT    NOT NULL, " +
+	            " PRIJMENI           TEXT    NOT NULL, " +
+	            " AGE            INT NOT NULL, " +
+	            " ZNAMKY         TEXT NOT NULL," +
+	            " OBOR			TEXT NOT NULL," +
+	            " PRUMER         REAL)";
+	         stmt.executeUpdate(sql);
+	         stmt.close();
+	         c.close();
+	      } catch ( Exception e ) {
+	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+	         e.printStackTrace();
+	         System.exit(0);
+	      }
+	      System.out.println("Table created successfully");
+	}
+	
+	void saveDataToDB() {
+		Connection c = null;
+	      Statement stmt = null;
+	      try {
+	         Class.forName("org.postgresql.Driver");
+	         c = DriverManager
+	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
+	            "general", "123");
+	         c.setAutoCommit(false);
+	         System.out.println("Opened database successfully");
+	         stmt = c.createStatement();
+	         
+	         String sql = new String();
+	         
+	         for(int s: studenti.keySet()) {
+	        	 student current = studenti.get(s);
+	        	 int id = s;
+	        	 String jmeno = current.getJmeno();
+	        	 String prijmeni = current.getPrijmeni();
+	        	 int age = current.vek();
+	        	 String znamky = current.getZnamkyString();
+	        	 String obor = current.obor;
+	        	 float prumer = current.getPrumer();
+	        	 
+	        	 sql = String.format("INSERT INTO DATA (ID, JMENO, PRIJMENI, AGE, ZNAMKY, OBOR, PRUMER)"
+	        			 + " VALUES (%d, '%s', '%s', %d, '%s', '%s', %f)", id, jmeno, prijmeni, age, znamky, obor, prumer);
+	        	 System.out.println(sql);
+	        	 stmt.executeUpdate(sql);
+	         }
+	         stmt.close();
+	         c.commit();
+	         c.close();
+	      } catch (Exception e) {
+	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+	         e.printStackTrace();
+	         System.exit(0);
+	      }
+	      System.out.println("Records created successfully");
+
+	      
+	}
+
+	void readSQL() {
+		Connection c = null;
+		Statement stmt = null;
+		if(studenti.size() != 0) {
+			System.out.println("Databaze neni prazdna a bude prepsana, pokracovat?");
+			System.out.println("1. ano");
+			System.out.println("2. ne");
+			int o = sc.nextInt();
+			
+			switch(o) {
+			case 1:
+				break;
+			default:
+				return;
+			}
+		}
+		studenti.clear();
+		try {
+			Class.forName("org.postgresql.Driver");
+			c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/studentidb", "general", "123");
+			c.setAutoCommit(false);
+			System.out.println("Opened database successfully");
+
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM DATA;");
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("jmeno");
+				String prijmeni = rs.getString("prijmeni");
+				int age = rs.getInt("age");
+				String znamky = rs.getString("znamky");
+				String obor = rs.getString("obor");
+				float prumer = rs.getFloat("prumer");
+				student s = null;
+				
+				switch(obor) {
+				case "humanitni obor":
+					s = new humanitniObor();
+					break;
+				case "technicky obor":
+					s = new technickyObor();
+					break;
+				case "kombinovany obor":
+					s = new kombinovanyObor();
+					break;
+				}
+				s.dbSetup(id, name, prijmeni, age, znamky, prumer);
+				studenti.put(id, s);
+			}
+			rs.close();
+			stmt.close();
+			c.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			e.printStackTrace();
+			System.exit(0);
+		}
+		System.out.println("Operation done successfully");
+
+	}
+
 	void precistData() {
 		String pwd = System.getProperty("user.dir");
 		File[] path = new File(pwd).listFiles();
-		LinkedList<File> data = new LinkedList();
+		LinkedList<File> data = new LinkedList<File>();
 		String fileName= "";
 		int pocet = 0;
 		int vyber = 0;
@@ -257,6 +412,19 @@ public class databaze {
 								);
 		}
 	}
+	void pridatZnamku(int id) {
+		student s = studenti.get(id);
+		
+		System.out.println("zadejte znaku: ");
+		
+		int znamka = sc.nextInt();
+		if(studentExistuje(id)) {
+			s.pridatZnamku(znamka);
+		}else {
+			System.out.println("student neni v databazi");
+		}
+			
+	}
 	void propustitStudenta(int id) {
 		if(studentExistuje(id)) {
 			studenti.remove(id);
@@ -293,7 +461,7 @@ public class databaze {
 		}
 		String jmeno = "";
 		while(novyStudent.maJmeno() == false) {
-			System.out.println("zadejte jmeno studenta");
+			System.out.print("zadejte jmeno studenta: ");
 			if(sc.hasNextLine()) {
 				jmeno = sc.nextLine();
 			}

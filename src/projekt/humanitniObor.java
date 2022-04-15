@@ -35,6 +35,10 @@ public class humanitniObor extends student implements Serializable{
 	public humanitniObor(int generovatID) {
 		super(generovatID);
 	}
+	public humanitniObor() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	@Override 
 	public void dovednost() {
 		setZnameni();
