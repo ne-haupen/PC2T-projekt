@@ -243,6 +243,7 @@ public class databaze {
 			System.out.println("Zadejte jmeno souboru: ");
 			if(sc.hasNextLine()) {
 				fileName = sc.nextLine();
+				fileName = sc.nextLine();
 			}
 			if(!fileName.endsWith(".txt")) {
 				fileName += ".txt";
@@ -289,7 +290,7 @@ public class databaze {
 		switch(o) {
 		case 1:
 			for(student s: studenti.values()) {
-				if(s.obor == "humanitni obor") {
+				if(s.obor.equals("humanitni obor")) {
 					pocet += 1;
 				}
 				
@@ -298,7 +299,7 @@ public class databaze {
 			break;
 		case 2:
 			for(student s: studenti.values()) {
-				if(s.obor == "technicky obor") {
+				if(s.obor.equals("technicky obor")) {
 					pocet += 1;
 				}
 			}
@@ -306,7 +307,7 @@ public class databaze {
 			break;
 		case 3:
 			for(student s: studenti.values()) {
-				if(s.obor == "kombinovany obor") {
+				if(s.obor.equals("kombinovany obor")) {
 					pocet += 1;
 				}
 			}
@@ -326,7 +327,7 @@ public class databaze {
 		switch(o) {
 		case 1:
 			for(student s: studenti.values()) {
-				if(s.obor == "humanitni obor") {
+				if(s.obor.equals("humanitni obor")) {
 					sum += s.getPrumer();
 					pocet++;
 				}
@@ -336,7 +337,7 @@ public class databaze {
 			break;
 		case 2:
 			for(student s: studenti.values()) {
-				if(s.obor == "technicky obor") {
+				if(s.obor.equals("technicky obor")) {
 					sum += s.getPrumer();
 					pocet++;
 				}
@@ -345,7 +346,7 @@ public class databaze {
 			break;
 		case 3:
 			for(student s: studenti.values()) {
-				if(s.obor == "kombinovany obor") {
+				if(s.obor.equals("kombinovany obor")) {
 					sum += s.getPrumer();
 					pocet++;
 				}
@@ -364,21 +365,21 @@ public class databaze {
 		switch(o){
 		case 1:
 			for(student s: studenti.values()) {
-				if(s.obor == "humanitni obor") {
+				if(s.obor.equals("humanitni obor")) {
 					sort.put(s.getPrijmeni(), s);
 				}
 			}
 			break;
 		case 2:
 			for(student s: studenti.values()) {
-				if(s.obor == "technicky obor") {
+				if(s.obor.equals("technicky obor")) {
 					sort.put(s.getPrijmeni(), s);
 				}
 			}
 			break;
 		case 3:
 			for(student s: studenti.values()) {
-				if(s.obor == "kombinovany obor") {
+				if(s.obor.equals("kombinovany obor")) {
 					sort.put(s.getPrijmeni(), s);
 				}
 			}
@@ -407,6 +408,7 @@ public class databaze {
 			System.out.println("ID: " + id +
 								"\njmeno: " + s.getJmeno() +
 								"\nprijmeni: " + s.getPrijmeni() +
+								"\nobor: "	+ s.obor +
 								"\nrok narozeni: " + s.getNarozeni().getYear() +
 								"\nstudijni prumer:" + s.getPrumer()
 								);

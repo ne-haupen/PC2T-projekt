@@ -26,6 +26,7 @@ public abstract class student implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
+	//pridat obor
 	void dbSetup(int id, String name, String prijmeni, int age, String znamky, float prumer) {
 		this.id = id;
 		this.jmeno = name;
