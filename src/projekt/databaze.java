@@ -17,7 +17,7 @@ public class databaze {
 	private LinkedHashMap<Integer, student> studenti = new LinkedHashMap<Integer, student>();
 	Scanner sc = new Scanner(System.in);
 	void resetDB(){
-		Connection c = null;
+		  Connection c = null;
 	      Statement stmt = null;
 	      try {
 	         Class.forName("org.postgresql.Driver");
@@ -32,8 +32,13 @@ public class databaze {
 	         stmt.close();
 	         c.close();
 	      } catch ( Exception e ) {
+	    	  if(e.getMessage().contains("ERROR: table \"data\" does not exist")) {
+		    		 System.out.println("db doesnt exist");
+		    		 return;
+		    	 }
 	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
 	         e.printStackTrace();
+	         System.out.println(e.getMessage());
 	         System.exit(0);
 	      }
 	      dbInit();
@@ -63,6 +68,10 @@ public class databaze {
 	         stmt.close();
 	         c.close();
 	      } catch ( Exception e ) {
+	    	  if(e.getMessage().contains("ERROR: table \"data\" does not exist")) {
+		    		 System.out.println("db doesnt exist");
+		    		 return;
+		    	 }
 	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
 	         e.printStackTrace();
 	         System.exit(0);
@@ -96,14 +105,19 @@ public class databaze {
 	        	 
 	        	 sql = String.format("INSERT INTO DATA (ID, JMENO, PRIJMENI, AGE, ZNAMKY, OBOR, PRUMER)"
 	        			 + " VALUES (%d, '%s', '%s', %d, '%s', '%s', %f)", id, jmeno, prijmeni, age, znamky, obor, prumer);
-	        	 System.out.println(sql);
 	        	 stmt.executeUpdate(sql);
 	         }
 	         stmt.close();
 	         c.commit();
 	         c.close();
-	      } catch (Exception e) {
-	         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+	      }catch (Exception e) {
+	    		if(e.getMessage().contains("ERROR: relation \"data\" does not exist")) {
+		    		 dbInit();
+		    		 saveDataToDB();
+		    		 return;
+		    	 }
+	         System.err.println( e.getMessage() );
+	         
 	         e.printStackTrace();
 	         System.exit(0);
 	      }

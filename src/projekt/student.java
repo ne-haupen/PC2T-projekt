@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import java.time.LocalDateTime;
 
 public abstract class student implements Serializable{
 	private String jmeno, prijmeni;

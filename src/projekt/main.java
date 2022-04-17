@@ -77,6 +77,9 @@ public class main {
 			case 13:
 				run = false;
 				break;
+			case 14:
+				db.resetDB();
+				break;
 			}
 		}
 }
