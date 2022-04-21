@@ -5,8 +5,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class humanitniObor extends student implements Serializable{
@@ -36,6 +34,7 @@ public class humanitniObor extends student implements Serializable{
 	}
 	public humanitniObor() {
 		super();
+		this.obor = "humanitni obor";
 		// TODO Auto-generated constructor stub
 	}
 	@Override 
@@ -43,8 +42,10 @@ public class humanitniObor extends student implements Serializable{
 		setZnameni();
 		Date narozeni = super.getNarozeni();
 		String z = "Kozoroh";
+		System.out.println(znameni.get("Kozoroh"));
 		int rok = narozeni.getYear();
 		narozeni.setYear(70);
+		System.out.println(narozeni);
 		for(String s : znameni.keySet()) {
 			  if(narozeni.after(znameni.get(s))) {
 				  z = s;

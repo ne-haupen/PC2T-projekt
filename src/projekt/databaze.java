@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.sql.*;
 
@@ -24,8 +27,6 @@ public class databaze {
 	         c = DriverManager
 	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
 	            "general", "123");
-	         System.out.println("Opened database successfully");
-
 	         stmt = c.createStatement();
 	         String sql = "DROP TABLE DATA";
 	         stmt.executeUpdate(sql);
@@ -42,7 +43,6 @@ public class databaze {
 	         System.exit(0);
 	      }
 	      dbInit();
-	      System.out.println("Table reseted successfully");
 	}
 	
 	void dbInit() {
@@ -57,10 +57,10 @@ public class databaze {
 
 	         stmt = c.createStatement();
 	         String sql = "CREATE TABLE DATA" +
-	            "(ID INT PRIMARY KEY     NOT NULL," +
+	            "(ID              INT  PRIMARY KEY NOT NULL," +
 	            " JMENO           TEXT    NOT NULL, " +
 	            " PRIJMENI           TEXT    NOT NULL, " +
-	            " AGE            INT NOT NULL, " +
+	            " AGE            TEXT NOT NULL, " +
 	            " ZNAMKY         TEXT NOT NULL," +
 	            " OBOR			TEXT NOT NULL," +
 	            " PRUMER         REAL)";
@@ -76,19 +76,18 @@ public class databaze {
 	         e.printStackTrace();
 	         System.exit(0);
 	      }
-	      System.out.println("Table created successfully");
 	}
 	
 	void saveDataToDB() {
-		Connection c = null;
+		  Connection c = null;
 	      Statement stmt = null;
+	      resetDB();
 	      try {
 	         Class.forName("org.postgresql.Driver");
 	         c = DriverManager
 	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
 	            "general", "123");
 	         c.setAutoCommit(false);
-	         System.out.println("Opened database successfully");
 	         stmt = c.createStatement();
 	         
 	         String sql = new String();
@@ -98,13 +97,13 @@ public class databaze {
 	        	 int id = s;
 	        	 String jmeno = current.getJmeno();
 	        	 String prijmeni = current.getPrijmeni();
-	        	 int age = current.vek();
+	        	 String age = current.getNarozeni2();
 	        	 String znamky = current.getZnamkyString();
 	        	 String obor = current.obor;
 	        	 float prumer = current.getPrumer();
 	        	 
 	        	 sql = String.format("INSERT INTO DATA (ID, JMENO, PRIJMENI, AGE, ZNAMKY, OBOR, PRUMER)"
-	        			 + " VALUES (%d, '%s', '%s', %d, '%s', '%s', %f)", id, jmeno, prijmeni, age, znamky, obor, prumer);
+	        			 + " VALUES (%d, '%s', '%s', '%s', '%s', '%s', %f)", id, jmeno, prijmeni, age, znamky, obor, prumer);
 	        	 stmt.executeUpdate(sql);
 	         }
 	         stmt.close();
@@ -116,12 +115,12 @@ public class databaze {
 		    		 saveDataToDB();
 		    		 return;
 		    	 }
-	         System.err.println( e.getMessage() );
+	         System.err.println(e.getMessage());
 	         
 	         e.printStackTrace();
 	         System.exit(0);
 	      }
-	      System.out.println("Records created successfully");
+	      System.out.println("data zapsana");
 
 	      
 	}
@@ -147,7 +146,6 @@ public class databaze {
 			Class.forName("org.postgresql.Driver");
 			c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/studentidb", "general", "123");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
 
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM DATA;");
@@ -155,7 +153,7 @@ public class databaze {
 				int id = rs.getInt("id");
 				String name = rs.getString("jmeno");
 				String prijmeni = rs.getString("prijmeni");
-				int age = rs.getInt("age");
+				String age = rs.getString("age");
 				String znamky = rs.getString("znamky");
 				String obor = rs.getString("obor");
 				float prumer = rs.getFloat("prumer");
@@ -400,13 +398,14 @@ public class databaze {
 			break;
 		}
 		
-		String[] jmena = (String[]) sort.values().toArray();
-		Arrays.sort(jmena);
+		List<String> jmena = new ArrayList();
+		for(student s: studenti.values()) {
+			jmena.add(s.getPrijmeni());
+		}
+		
+		Collections.sort(jmena);
 		for(String s: jmena) {
-			student r = sort.get(s);
-			System.out.println("prijmeni studenta" + s);
-			vypsatInformaceStudenta(r.getID());
-			System.out.println();
+			System.out.println(s);
 		}
 		
 	}
@@ -423,7 +422,7 @@ public class databaze {
 								"\njmeno: " + s.getJmeno() +
 								"\nprijmeni: " + s.getPrijmeni() +
 								"\nobor: "	+ s.obor +
-								"\nrok narozeni: " + s.getNarozeni().getYear() +
+								"\nrok narozeni: " + s.getNarozeni2() +
 								"\nstudijni prumer:" + s.getPrumer()
 								);
 		}
@@ -431,7 +430,7 @@ public class databaze {
 	void pridatZnamku(int id) {
 		student s = studenti.get(id);
 		
-		System.out.println("zadejte znaku: ");
+		System.out.println("zadejte znamku: ");
 		
 		int znamka = sc.nextInt();
 		if(studentExistuje(id)) {
@@ -477,16 +476,16 @@ public class databaze {
 		}
 		String jmeno = "";
 		while(true) {
-			System.out.print("zadejte jmeno studenta: ");
+			if(novyStudent.setJmeno(jmeno) == true) {
+				break;
+			}
+			System.out.println("zadejte jmeno studenta: ");
 			while(!sc.hasNext())
 			{
 				sc.nextLine();
 			}
 			jmeno = sc.nextLine();
-			jmeno = sc.nextLine();
-			if(novyStudent.setJmeno(jmeno) == true) {
-				break;
-			}
+			//jmeno = sc.nextLine();
 		}
 		while(novyStudent.maDatum() == false) {
 			System.out.println("zadejte datum narozeni studenta");

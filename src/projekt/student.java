@@ -5,9 +5,9 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
-import java.time.LocalDateTime;
 
 public abstract class student implements Serializable{
 	private String jmeno, prijmeni;
@@ -28,13 +28,19 @@ public abstract class student implements Serializable{
 	}
 
 	//pridat obor
-	void dbSetup(int id, String name, String prijmeni, int age, String znamky, float prumer) {
+	void dbSetup(int id, String name, String prijmeni, String age, String znamky, float prumer) {
 		this.id = id;
 		this.jmeno = name;
 		this.prijmeni = prijmeni;
 		for (int i = 0; i < znamky.length(); i++) {
 			this.znamky.add(Character.getNumericValue(znamky.charAt(i)));
         }
+		try {
+			this.narozeni = format.parse(age);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		updatePrumer();
 		
 	}
@@ -83,6 +89,9 @@ public abstract class student implements Serializable{
 	}
 	boolean setJmeno(String jmeno) {
 		String[] data = jmeno.split("\\s+", 2);
+		if(jmeno.isEmpty()) {
+			return false;
+		}
 		if(data.length != 2 || data[0].isBlank() || data[1].isBlank()) {
 			System.out.println("zadan spatny format jmena");
 			return false;
@@ -94,13 +103,18 @@ public abstract class student implements Serializable{
 	void setNarozeni(String datum) {
 		try {
 			this.narozeni = format.parse(datum);
-			narozeni.setYear(narozeni.getYear()+1900);
+			//narozeni.setYear(narozeni.getYear()+1900);
 		}catch(Exception e) {
 			System.out.println("byl zadan spatny format data narozeni");
 		}
 	}
 	Date getNarozeni() {
 		return this.narozeni;
+	}
+	
+	String getNarozeni2() {
+		String s = new String((this.narozeni.getDate()) + "." + (this.narozeni.getMonth()+1) + "." + (this.narozeni.getYear()+1900));
+		return s;
 	}
 	void pridatZnamku(int i) {
 		if(i>5 || i<1) {

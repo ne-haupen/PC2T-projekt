@@ -8,7 +8,7 @@ public class technickyObor extends student {
 	public technickyObor() {
 		
 		super();
-		obor = "technicky obor";
+		this.obor = "technicky obor";
 		// TODO Auto-generated constructor stub
 	}
 	@Override 
