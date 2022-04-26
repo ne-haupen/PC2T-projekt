@@ -88,7 +88,7 @@ public abstract class student implements Serializable{
 
 	}
 	boolean setJmeno(String jmeno) {
-		String[] data = jmeno.split("\\s+", 2);
+		String[] data = jmeno.split("\\s", 2);
 		if(jmeno.isEmpty()) {
 			return false;
 		}

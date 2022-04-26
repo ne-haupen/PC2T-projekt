@@ -78,7 +78,7 @@ public class main {
 				run = false;
 				break;
 			case 14:
-				db.resetDB();
+				db.dbInit();
 				break;
 			}
 		}

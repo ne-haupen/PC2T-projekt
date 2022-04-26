@@ -47,7 +47,7 @@ public class kombinovanyObor extends student{
 		System.out.println(znameni.get("Kozoroh"));
 		int rok = narozeni.getYear();
 		narozeni.setYear(70);
-		System.out.println(narozeni);
+		System.out.println(narozeni.toString());
 		for(String s : znameni.keySet()) {
 			  if(narozeni.after(znameni.get(s))) {
 				  z = s;

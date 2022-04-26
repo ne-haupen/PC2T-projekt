@@ -27,6 +27,7 @@ public class databaze {
 	         c = DriverManager
 	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
 	            "general", "123");
+	         
 	         stmt = c.createStatement();
 	         String sql = "DROP TABLE DATA";
 	         stmt.executeUpdate(sql);
@@ -53,7 +54,6 @@ public class databaze {
 	         c = DriverManager
 	            .getConnection("jdbc:postgresql://localhost:5432/studentidb",
 	            "general", "123");
-	         System.out.println("Opened database successfully");
 
 	         stmt = c.createStatement();
 	         String sql = "CREATE TABLE DATA" +
@@ -181,7 +181,7 @@ public class databaze {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		System.out.println("Operation done successfully");
+		System.out.println("databaze nactena");
 
 	}
 
@@ -307,7 +307,7 @@ public class databaze {
 				}
 				
 			}
-			System.out.println("V humanitnim oboru je: " + pocet + " studentu");
+			System.out.println("Pocet studentu v humanitnim oboru je: " + pocet);
 			break;
 		case 2:
 			for(student s: studenti.values()) {
@@ -315,7 +315,7 @@ public class databaze {
 					pocet += 1;
 				}
 			}
-			System.out.println("V technickem oboru je: " + pocet + " studentu");
+			System.out.println("Pocet studentu v technickem oboru je: " + pocet);
 			break;
 		case 3:
 			for(student s: studenti.values()) {
@@ -323,7 +323,7 @@ public class databaze {
 					pocet += 1;
 				}
 			}
-			System.out.println("V kombinovanem oboru je: " + pocet + " studentu");
+			System.out.println("Pocet studentu v kombinovanem oboru je: " + pocet );
 			break;
 		}
 	}
@@ -373,35 +373,32 @@ public class databaze {
 		System.out.println("3... kombinovany obor");
 		
 		int o = sc.nextInt();
-		LinkedHashMap<String, student> sort = new LinkedHashMap();
+		List<String> jmena = new ArrayList();
+
 		switch(o){
 		case 1:
 			for(student s: studenti.values()) {
 				if(s.obor.equals("humanitni obor")) {
-					sort.put(s.getPrijmeni(), s);
+					jmena.add(s.getPrijmeni());
 				}
 			}
 			break;
 		case 2:
 			for(student s: studenti.values()) {
 				if(s.obor.equals("technicky obor")) {
-					sort.put(s.getPrijmeni(), s);
+					jmena.add(s.getPrijmeni());
 				}
 			}
 			break;
 		case 3:
 			for(student s: studenti.values()) {
 				if(s.obor.equals("kombinovany obor")) {
-					sort.put(s.getPrijmeni(), s);
+					jmena.add(s.getPrijmeni());
 				}
 			}
 			break;
 		}
 		
-		List<String> jmena = new ArrayList();
-		for(student s: studenti.values()) {
-			jmena.add(s.getPrijmeni());
-		}
 		
 		Collections.sort(jmena);
 		for(String s: jmena) {
@@ -460,8 +457,7 @@ public class databaze {
 		System.out.println("2... technicky obor");
 		System.out.println("3... kombinovany obor");
 		
-		int o = sc.nextInt();
-		
+		int o = Integer.parseInt(sc.nextLine());
 		student novyStudent = null;
 		switch(o){
 		case 1:
@@ -475,21 +471,15 @@ public class databaze {
 			break;
 		}
 		String jmeno = "";
-		while(true) {
-			if(novyStudent.setJmeno(jmeno) == true) {
-				break;
-			}
+
+		
+		while(novyStudent.maJmeno() == false) {
 			System.out.println("zadejte jmeno studenta: ");
-			while(!sc.hasNext())
-			{
-				sc.nextLine();
-			}
-			jmeno = sc.nextLine();
-			//jmeno = sc.nextLine();
+			novyStudent.setJmeno(sc.nextLine());
 		}
 		while(novyStudent.maDatum() == false) {
 			System.out.println("zadejte datum narozeni studenta");
-			novyStudent.setNarozeni((sc.nextLine()));;
+			novyStudent.setNarozeni(sc.nextLine());
 		}
 		studenti.put(novyStudent.getID(), novyStudent);
 	}
